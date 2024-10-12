@@ -3,3 +3,6 @@
 pub mod prelude;
 
 pub mod post;
+pub mod proposal;
+pub mod space;
+pub mod user;

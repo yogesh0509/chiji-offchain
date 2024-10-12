@@ -11,19 +11,14 @@ use warp::Filter;
 
 #[tokio::main]
 async fn main() {
-    // Load environment variables from .env file
     dotenv().ok();
 
-    // Set default log level if RUST_LOG is not set
     if std::env::var_os("RUST_LOG").is_none() {
         std::env::set_var("RUST_LOG", "api=info");
     }
     pretty_env_logger::init();
-
-    // Get database URL from environment variable
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    // Set up database connection with error handling
     let connection = match Database::connect(&database_url).await {
         Ok(conn) => conn,
         Err(err) => {
@@ -42,9 +37,7 @@ async fn main() {
     let routes = api::routes::setup_routes(connection.clone())
         .with(warp::log("api"));
 
-    // Define the server address
-    let addr: SocketAddr = ([0, 0, 0, 0], 8000).into();
-    
+    let addr: SocketAddr = ([0, 0, 0, 0], 8000).into();    
     println!("🚀 Server started successfully at {}", addr);
 
     // Start the server and await for shutdown signal
