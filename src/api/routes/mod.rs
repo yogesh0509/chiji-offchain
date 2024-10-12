@@ -19,8 +19,15 @@ pub fn setup_routes(
         .and(warp::body::json())
         .and_then(handlers::create_post);
 
+    let get_post = api
+        .and(warp::path("posts"))
+        .and(warp::get())
+        .and(with_db(db.clone()))
+        .and_then(handlers::get_post);
+
     health_check
         .or(create_post)
+        .or(get_post)
         .with(warp::cors().allow_any_origin().allow_headers(vec!["content-type"]))
         .with(warp::log("api"))
 }

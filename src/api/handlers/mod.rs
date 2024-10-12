@@ -15,6 +15,17 @@ pub struct DatabaseError(pub DbErr);
 // Implement `warp::reject::Reject` for your new type
 impl Reject for DatabaseError {}
 
+pub async fn get_post(
+    db: DatabaseConnection,
+) -> Result<impl Reply, Rejection> {
+
+    let posts = Post::find().all(&db).await;
+    match posts {
+        Ok(posts) => Ok(warp::reply::json(&posts)),
+        Err(err) => Err(warp::reject::custom(DatabaseError(err))), 
+    }
+}
+
 pub async fn create_post(
     db: DatabaseConnection,
     form_data: CreatePostForm,
