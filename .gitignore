@@ -42,3 +42,6 @@ Thumbs.db
 *.dSYM
 *.dSYM.zip
 *.dSYM.tar.gz
+
+#env
+.env
