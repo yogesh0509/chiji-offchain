@@ -16,6 +16,8 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Proposal::Description).text())
                     .col(ColumnDef::new(Proposal::SpaceId).integer().not_null())
                     .col(ColumnDef::new(Proposal::CreatorAddress).string().not_null())
+                    .col(ColumnDef::new(Proposal::StartTime).integer())
+                    .col(ColumnDef::new(Proposal::LockPeriod).integer())
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk-proposal-space")
@@ -42,8 +44,8 @@ enum Proposal {
     Description,
     SpaceId,
     CreatorAddress,
-    startTime,
-    lockPeriod
+    StartTime,
+    LockPeriod
 }
 
 #[derive(Iden)]
