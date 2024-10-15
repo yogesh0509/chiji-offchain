@@ -1,5 +1,6 @@
 mod api;
 mod events;
+mod utils;
 
 use dotenv::dotenv;
 use sea_orm::Database;

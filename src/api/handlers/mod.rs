@@ -1,8 +1,12 @@
+use std::any::Any;
+
+use alloy::primitives::map::HashMap;
 // use ::entity::post;
-use ::entity::prelude::{User, Space, Proposal};
-use ::entity::{user, space, proposal};
+use ::entity::prelude::{Proposal, Space, User};
+use ::entity::{proposal, space, user};
 use sea_orm::*;
 use serde::{Deserialize, Serialize};
+use warp::filters::multipart::FormData;
 use warp::{reject::Reject, Rejection, Reply};
 
 pub mod error;
@@ -78,7 +82,6 @@ pub async fn create_proposal(
     db: DatabaseConnection,
     data: proposal::Model,
 ) -> Result<impl Reply, Rejection> {
-
     println!("{:?}", data);
 
     let row = proposal::ActiveModel {
@@ -151,6 +154,18 @@ pub async fn create_space(
         Ok(row) => Ok(warp::reply::json(&row)),
         Err(err) => Err(warp::reject::custom(DatabaseError(err))),
     }
+}
+
+pub async fn upload_space_logo(data: HashMap<String, String>) -> Result<impl Reply, Rejection> {
+    println!("entering upload space logo");
+    // println!("{:?}", form);
+
+    const MESSAGE: &str = "Upload_space_logo";
+    let response_json = &GenericResponse {
+        status: "success".to_string(),
+        message: MESSAGE.to_string(),
+    };
+    Ok(warp::reply::json(response_json))
 }
 
 // User handlers
