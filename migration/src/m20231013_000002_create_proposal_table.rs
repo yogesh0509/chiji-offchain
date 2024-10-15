@@ -15,18 +15,12 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Proposal::Title).string().not_null())
                     .col(ColumnDef::new(Proposal::Description).text())
                     .col(ColumnDef::new(Proposal::SpaceId).integer().not_null())
-                    .col(ColumnDef::new(Proposal::CreatorId).integer().not_null())
+                    .col(ColumnDef::new(Proposal::CreatorAddress).string().not_null())
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk-proposal-space")
                             .from(Proposal::Table, Proposal::SpaceId)
                             .to(Space::Table, Space::Id)
-                    )
-                    .foreign_key(
-                        ForeignKey::create()
-                            .name("fk-proposal-creator")
-                            .from(Proposal::Table, Proposal::CreatorId)
-                            .to(User::Table, User::Id)
                     )
                     .to_owned()
             )
@@ -47,17 +41,11 @@ enum Proposal {
     Title,
     Description,
     SpaceId,
-    CreatorId,
+    CreatorAddress,
 }
 
 #[derive(Iden)]
 enum Space {
-    Table,
-    Id,
-}
-
-#[derive(Iden)]
-enum User {
     Table,
     Id,
 }

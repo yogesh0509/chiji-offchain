@@ -2,7 +2,7 @@
 
 pub mod prelude;
 
-pub mod post;
 pub mod proposal;
+pub mod sea_orm_active_enums;
 pub mod space;
-pub mod user;
+pub mod vote;

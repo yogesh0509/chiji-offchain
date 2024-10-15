@@ -12,10 +12,10 @@ pub struct Model {
     #[sea_orm(column_type = "Text", nullable)]
     pub description: Option<String>,
     pub space_id: i32,
-    pub creator_id: i32,
+    pub creator_address: String,
 }
 
-#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
         belongs_to = "super::space::Entity",
@@ -25,14 +25,8 @@ pub enum Relation {
         on_delete = "NoAction"
     )]
     Space,
-    #[sea_orm(
-        belongs_to = "super::user::Entity",
-        from = "Column::CreatorId",
-        to = "super::user::Column::Id",
-        on_update = "NoAction",
-        on_delete = "NoAction"
-    )]
-    User,
+    #[sea_orm(has_many = "super::vote::Entity")]
+    Vote,
 }
 
 impl Related<super::space::Entity> for Entity {
@@ -41,9 +35,9 @@ impl Related<super::space::Entity> for Entity {
     }
 }
 
-impl Related<super::user::Entity> for Entity {
+impl Related<super::vote::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::User.def()
+        Relation::Vote.def()
     }
 }
 

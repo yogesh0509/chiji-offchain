@@ -76,43 +76,43 @@ pub fn setup_routes(
         .and_then(handlers::get_space_by_id)
         .recover(handle_rejection);
 
-    let create_user = api
-        .and(warp::path("create"))
-        .and(warp::path("user"))
-        .and(warp::post())
-        .and(with_db(db.clone()))
-        .and(warp::body::json())
-        .and_then(handlers::create_user)
-        .recover(handle_rejection);
+    // let create_user = api
+    //     .and(warp::path("create"))
+    //     .and(warp::path("user"))
+    //     .and(warp::post())
+    //     .and(with_db(db.clone()))
+    //     .and(warp::body::json())
+    //     .and_then(handlers::create_user)
+    //     .recover(handle_rejection);
 
-    let get_all_users = api
-        .and(warp::path("users"))
-        .and(warp::path("all"))
-        .and(warp::get())
-        .and(with_db(db.clone()))
-        .and_then(handlers::get_all_users)
-        .recover(handle_rejection);
+    // let get_all_users = api
+    //     .and(warp::path("users"))
+    //     .and(warp::path("all"))
+    //     .and(warp::get())
+    //     .and(with_db(db.clone()))
+    //     .and_then(handlers::get_all_users)
+    //     .recover(handle_rejection);
 
-    let get_user_by_id = api
-        .and(warp::path("user"))
-        .and(warp::path::param::<i32>())
-        .and(warp::get())
-        .and(with_db(db.clone()))
-        .and_then(handlers::get_user_by_id)
-        .recover(handle_rejection);
+    // let get_user_by_id = api
+    //     .and(warp::path("user"))
+    //     .and(warp::path::param::<i32>())
+    //     .and(warp::get())
+    //     .and(with_db(db.clone()))
+    //     .and_then(handlers::get_user_by_id)
+    //     .recover(handle_rejection);
 
     health_check
         // .or(create_post)
         // .or(get_post)
-        .or(create_proposal)
-        .or(get_all_proposals)
-        .or(get_proposal_by_id)
+        // .or(create_proposal)
+        // .or(get_all_proposals)
+        // .or(get_proposal_by_id)
         .or(create_space)
-        .or(get_all_spaces)
-        .or(get_space_by_id)
-        .or(create_user)
-        .or(get_all_users)
-        .or(get_user_by_id)
+        // .or(get_all_spaces)
+        // .or(get_space_by_id)
+        // .or(create_user)
+        // .or(get_all_users)
+        // .or(get_user_by_id)
         .with(
             warp::cors()
                 .allow_any_origin()

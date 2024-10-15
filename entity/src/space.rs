@@ -8,36 +8,30 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    pub protocol: String,
-    pub title: String,
-    pub creator: i32,
+    pub name: String,
     #[sea_orm(column_type = "Text", nullable)]
-    pub description: Option<String>,
+    pub about: Option<String>,
+    pub avatar: Option<String>,
+    pub symbol: Option<String>,
+    pub token_address: Option<String>,
+    pub governance_contract_address: Option<String>,
+    pub twitter: Option<String>,
+    pub discord: Option<String>,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub terms: Option<String>,
+    pub admins: Option<Json>,
+    pub authors: Option<Json>,
 }
 
-#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(has_many = "super::proposal::Entity")]
     Proposal,
-    #[sea_orm(
-        belongs_to = "super::user::Entity",
-        from = "Column::Creator",
-        to = "super::user::Column::Id",
-        on_update = "NoAction",
-        on_delete = "NoAction"
-    )]
-    User,
 }
 
 impl Related<super::proposal::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Proposal.def()
-    }
-}
-
-impl Related<super::user::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::User.def()
     }
 }
 

@@ -29,6 +29,7 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, warp::Reject
         return Ok(warp::reply::with_status(json, StatusCode::BAD_REQUEST));
     }
     // Fallback case for any other errors
+    println!("{:?}", err);
     let json = warp::reply::json(&ErrorResponse {
         status: "error".to_string(),
         message: "Unknown error occurred".to_string(),
