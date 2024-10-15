@@ -101,6 +101,15 @@ pub fn setup_routes(
     //     .and_then(handlers::get_user_by_id)
     //     .recover(handle_rejection);
 
+    let upload_s3 = api
+        .and(warp::path("upload"))
+        .and(warp::path("logo"))
+        .and(warp::post())
+        .and(warp::body::json())
+        // .and(warp::multipart::form().max_length(5 * 1024 * 1024))
+        .and_then(handlers::upload_space_logo)
+        .recover(handle_rejection);
+
     health_check
         // .or(create_post)
         // .or(get_post)
