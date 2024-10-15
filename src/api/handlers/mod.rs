@@ -2,12 +2,13 @@ use std::any::Any;
 
 use alloy::primitives::map::HashMap;
 // use ::entity::post;
-use ::entity::prelude::{Space, Proposal, Vote};
-use ::entity::{space, proposal, vote};
+use ::entity::prelude::{Proposal, Space, Vote};
+use ::entity::{proposal, space, vote};
 use sea_orm::*;
 use serde::{Deserialize, Serialize};
 use warp::filters::multipart::FormData;
 use warp::{reject::Reject, Rejection, Reply};
+use serde_json::json;
 
 pub mod error;
 pub use error::handle_rejection;
@@ -137,6 +138,49 @@ pub async fn create_space(
     }
 }
 
+pub async fn join_space(
+    address: String,
+    space_id: i32,
+    db: DatabaseConnection,
+) -> Result<impl Reply, Rejection> {
+
+    println!("user: {}", address);
+    let mut space: space::ActiveModel = match Space::find_by_id(space_id).one(&db).await {
+        Ok(Some(s)) => s.into(),
+        Ok(None) => return Err(warp::reject::not_found()),
+        Err(e) => return Err(warp::reject::custom(DatabaseError(e))),
+    };
+
+    let users_json = space.users.as_ref();
+    let mut users: Vec<String> = users_json
+    .as_ref()
+    .and_then(|v| v.as_array())  
+    .map(|arr| arr.iter()
+        .filter_map(|v| v.as_str().map(|s| s.to_owned()))  // Safely borrow & clone strings
+        .collect()
+    )
+    .unwrap_or_default();
+
+    println!("{:?}", users);
+
+    if !users.contains(&address) {
+        users.push(address.to_owned());
+
+        space.users = Set(Some(JsonValue::Array(
+            users.into_iter().map(JsonValue::String).collect(),
+        )));
+
+        match space.update(&db).await {
+            Ok(updated_space) => Ok(warp::reply::json(&updated_space)),
+            Err(e) => Err(warp::reject::custom(DatabaseError(e))),
+        }
+    } else {
+        Ok(warp::reply::json(
+            &json!({ "message": "user have already joined the space" }),
+        ))
+    }
+}
+
 pub async fn upload_space_logo(data: HashMap<String, String>) -> Result<impl Reply, Rejection> {
     println!("entering upload space logo");
     // println!("{:?}", form);
@@ -148,7 +192,6 @@ pub async fn upload_space_logo(data: HashMap<String, String>) -> Result<impl Rep
     };
     Ok(warp::reply::json(response_json))
 }
-
 
 pub async fn create_vote(
     db: DatabaseConnection,
@@ -171,7 +214,11 @@ pub async fn create_vote(
     }
 }
 
-pub async fn get_user_vote(user_address: String, proposal_id: i32, db: DatabaseConnection) -> Result<impl Reply, Rejection> {
+pub async fn get_user_vote(
+    user_address: String,
+    proposal_id: i32,
+    db: DatabaseConnection,
+) -> Result<impl Reply, Rejection> {
     let vote = Vote::find()
         .filter(vote::Column::UserAddress.eq(user_address))
         .filter(vote::Column::ProposalId.eq(proposal_id))

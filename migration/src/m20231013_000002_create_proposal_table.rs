@@ -42,6 +42,8 @@ enum Proposal {
     Description,
     SpaceId,
     CreatorAddress,
+    startTime,
+    lockPeriod
 }
 
 #[derive(Iden)]

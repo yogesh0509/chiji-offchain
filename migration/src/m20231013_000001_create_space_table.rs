@@ -23,6 +23,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Space::Terms).text())
                     .col(ColumnDef::new(Space::Admins).json())
                     .col(ColumnDef::new(Space::Authors).json())
+                    .col(ColumnDef::new(Space::Users).json())
                     .to_owned()
             )
             .await
@@ -50,4 +51,5 @@ enum Space {
     Terms,
     Admins,
     Authors,
+    Users
 }

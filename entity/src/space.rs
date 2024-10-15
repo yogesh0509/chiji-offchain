@@ -21,6 +21,7 @@ pub struct Model {
     pub terms: Option<String>,
     pub admins: Option<Json>,
     pub authors: Option<Json>,
+    pub users: Option<Json>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

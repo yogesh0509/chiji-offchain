@@ -13,19 +13,6 @@ pub fn setup_routes(
         .and(warp::get())
         .and_then(handlers::health_checker_handler);
 
-    // let create_post = api
-    //     .and(warp::path("posts"))
-    //     .and(warp::post())
-    //     .and(with_db(db.clone()))
-    //     .and(warp::body::json())
-    //     .and_then(handlers::create_post);
-
-    // let get_post = api
-    //     .and(warp::path("posts"))
-    //     .and(warp::get())
-    //     .and(with_db(db.clone()))
-    //     .and_then(handlers::get_post);
-
     let create_proposal = api
         .and(warp::path("create"))
         .and(warp::path("proposal"))
@@ -60,6 +47,16 @@ pub fn setup_routes(
         .and_then(handlers::create_space)
         .recover(handle_rejection);
 
+    let join_space = api
+        .and(warp::path("join"))
+        .and(warp::path("space"))
+        .and(warp::path::param::<String>())
+        .and(warp::path::param::<i32>())
+        .and(warp::get())
+        .and(with_db(db.clone()))
+        .and_then(handlers::join_space)
+        .recover(handle_rejection);
+
     let get_all_spaces = api
         .and(warp::path("spaces"))
         .and(warp::path("all"))
@@ -76,31 +73,6 @@ pub fn setup_routes(
         .and_then(handlers::get_space_by_id)
         .recover(handle_rejection);
 
-    // let create_user = api
-    //     .and(warp::path("create"))
-    //     .and(warp::path("user"))
-    //     .and(warp::post())
-    //     .and(with_db(db.clone()))
-    //     .and(warp::body::json())
-    //     .and_then(handlers::create_user)
-    //     .recover(handle_rejection);
-
-    // let get_all_users = api
-    //     .and(warp::path("users"))
-    //     .and(warp::path("all"))
-    //     .and(warp::get())
-    //     .and(with_db(db.clone()))
-    //     .and_then(handlers::get_all_users)
-    //     .recover(handle_rejection);
-
-    // let get_user_by_id = api
-    //     .and(warp::path("user"))
-    //     .and(warp::path::param::<i32>())
-    //     .and(warp::get())
-    //     .and(with_db(db.clone()))
-    //     .and_then(handlers::get_user_by_id)
-    //     .recover(handle_rejection);
-
     let upload_s3 = api
         .and(warp::path("upload"))
         .and(warp::path("logo"))
@@ -116,7 +88,8 @@ pub fn setup_routes(
         // .or(create_proposal)
         // .or(get_all_proposals)
         // .or(get_proposal_by_id)
-        .or(create_space)
+        // .or(create_space)
+        .or(join_space)
         // .or(get_all_spaces)
         // .or(get_space_by_id)
         // .or(create_user)
