@@ -3,8 +3,8 @@ mod events;
 mod utils;
 
 use dotenv::dotenv;
-use sea_orm::Database;
 use migration::{Migrator, MigratorTrait};
+use sea_orm::Database;
 use std::env;
 use std::net::SocketAddr;
 use tokio::signal;
@@ -34,11 +34,14 @@ async fn main() {
         return;
     }
 
-    // Set up API routes
-    let routes = api::routes::setup_routes(connection.clone())
-        .with(warp::log("api"));
+    tokio::task::spawn(async {
+        events::monitor_events().await;
+    });
 
-    let addr: SocketAddr = ([0, 0, 0, 0], 8000).into();    
+    // Set up API routes
+    let routes = api::routes::setup_routes(connection.clone()).with(warp::log("api"));
+
+    let addr: SocketAddr = ([0, 0, 0, 0], 8000).into();
     println!("🚀 Server started successfully at {}", addr);
 
     // Start the server and await for shutdown signal

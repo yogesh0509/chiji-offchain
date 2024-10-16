@@ -1,32 +1,31 @@
 use alloy::{
-    dyn_abi::{DynSolType, DynSolValue}, hex, primitives::address, providers::{Provider, ProviderBuilder, WsConnect}, rpc::types::{BlockNumberOrTag, Filter}
+    dyn_abi::{DynSolType, DynSolValue},
+    hex,
+    primitives::address,
+    providers::{Provider, ProviderBuilder, WsConnect},
+    rpc::types::{BlockNumberOrTag, Filter},
 };
 use futures_util::stream::StreamExt;
 use std::error::Error;
 
 pub async fn monitor_events() -> Result<(), Box<dyn Error>> {
-    // Create the provider.
-    let rpc_url = "wss://base-sepolia.g.alchemy.com/v2/ZXlHMZsPDpR82kjqBEH8KpPvacbKpmsI";
+    println!("Looking for events 🔍");
+    let rpc_url = "wss://base-sepolia.g.alchemy.com/v2/dsfDS_Je3D5uE96msKwAppfkvsnys2a2";
     let ws = WsConnect::new(rpc_url);
     let provider = ProviderBuilder::new().on_ws(ws).await?;
 
-    // Create a filter to watch for UNI token transfers.
-    let uniswap_token_address = address!("9b17032749aa066a2DeA40b746AA6aa09CdE67d9");
-    let filter = Filter::new()
-        .address(uniswap_token_address)
-        // By specifying an `event` or `event_signature` we listen for a specific event of the
-        // contract. In this case the `Transfer(address,address,uint256)` event.
-        .event("Transfer(address,address,uint256)")
-        .from_block(BlockNumberOrTag::Latest);
+    let factory_address = address!("03F7f254cC7442045cbBbC16b268cbF87608659D");
 
-    // Subscribe to logs.
+    let filter = Filter::new()
+        .address(factory_address)
+        .event("ContractDeployed(index_topic_1 address contractAddress, index_topic_2 address timelockContract)")
+        .from_block(BlockNumberOrTag::Earliest);
+
     let sub = provider.subscribe_logs(&filter).await?;
     let mut stream = sub.into_stream();
 
     while let Some(log) = stream.next().await {
-        let val = &log.data().data;
-        println!("Uniswap token logs: {:?}, {:?}, {:?}", log.topics(), log.transaction_hash, log.data());
-        // decode(val)?;
+        println!("Factory logs: ${:?}", log);
     }
 
     Ok(())
@@ -42,7 +41,11 @@ fn print_tuple(value: &DynSolValue, field_names: &[&str]) {
 
 fn decode(encoded_domain: &[u8]) -> Result<(), Box<dyn Error>> {
     println!("{}", hex::encode(encoded_domain));
-    let domain_type = DynSolType::Tuple(vec![DynSolType::Address, DynSolType::Address, DynSolType::Uint(256)]);
+    let domain_type = DynSolType::Tuple(vec![
+        DynSolType::Address,
+        DynSolType::Address,
+        DynSolType::Uint(256),
+    ]);
 
     let decoded_domain = domain_type.abi_decode(encoded_domain)?;
     println!("\nDecoded domain:");

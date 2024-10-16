@@ -117,6 +117,7 @@ pub fn setup_routes(
         // .or(get_all_proposals)
         // .or(get_proposal_by_id)
         .or(create_space)
+        .or(upload_s3)
         // .or(get_all_spaces)
         // .or(get_space_by_id)
         // .or(create_user)
