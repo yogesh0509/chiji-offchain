@@ -91,7 +91,6 @@ pub async fn create_proposal(
     println!("{:?}", data);
 
     let row = proposal::ActiveModel {
-        id: Set(data.id.to_owned()),
         title: Set(data.title.to_owned()),
         description: Set(data.description.to_owned()),
         space_id: Set(data.space_id.to_owned()),
@@ -141,7 +140,6 @@ pub async fn create_space(
 ) -> Result<impl Reply, Rejection> {
     println!("{:?}", data);
     let row = space::ActiveModel {
-        id: Set(data.id.to_owned()),
         name: Set(data.name.to_owned()),
         about: Set(data.about.to_owned()),
         avatar: Set(data.avatar.to_owned()),
@@ -225,7 +223,6 @@ pub async fn create_vote(
 ) -> Result<impl Reply, Rejection> {
     println!("{:?}", data);
     let row = vote::ActiveModel {
-        id: Set(data.id.to_owned()),
         user_address: Set(data.user_address.to_owned()),
         proposal_id: Set(data.proposal_id.to_owned()),
         vote_type: Set(data.vote_type.to_owned()),
