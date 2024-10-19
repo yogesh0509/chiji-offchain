@@ -11,7 +11,6 @@ members = [".", "entity", "migration"]
 [dependencies]
 entity = { path = "entity" }
 migration = { path = "migration" }
-alloy = { version = "0.4.2", features = ["full"] }
 chrono = { version = "0.4.23", features = ["serde"] }
 futures-util = "0.3.31"
 pretty_env_logger = "0.4.0"
@@ -30,3 +29,4 @@ axum = { version = "0.7.7", features = ["multipart"] }
 image = "0.25.1"
 thiserror = "1.0.58"
 tower-http = { version = "0.5.2", features = ["timeout"] }
+ethers = "2.0.14"

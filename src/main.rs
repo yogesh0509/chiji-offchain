@@ -34,9 +34,9 @@ async fn main() {
         return;
     }
 
-    tokio::task::spawn(async {
-        events::monitor_events().await;
-    });
+    // tokio::task::spawn(async {
+    //     events::monitor_events().await;
+    // });
 
     // Set up API routes
     let routes = api::routes::setup_routes(connection.clone()).with(warp::log("api"));
